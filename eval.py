@@ -2,6 +2,7 @@ import keras
 import sys
 import h5py
 import numpy as np
+import tensorflow as tf
 
 clean_data_filename = str(sys.argv[1])
 model_filename = str(sys.argv[2])
