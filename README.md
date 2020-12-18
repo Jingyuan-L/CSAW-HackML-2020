@@ -34,17 +34,12 @@
    2. The detailed information about the code and how this project works is in the `project_report_jl10915.pdf` file.
 
 ## IV. How to Run My `badNet_repair.py` File
-   1. Running the following command:
-   
+   1. Run the following command:
    `python badNet_repair.py <test data directory> <bad model directory>`
-   
     E.g., `python badNet_repair.py data/clean_test_data.h5 models/anonymous_bd_net.h5`
-    
-   2. The `badNet_repair.py` file will print all the information you need including the classification accuracy of the test data.
+   2. The `badNet_repair.py` file will print out all the information you need including the classification accuracy of the test data.
    3. If you want test the repaired good net separately, the good net will been saved in 'models/goodNet.h5', you can run:
-   
    `python eval.py <test data directory> <good net model directory>`
-   
-   E.g., `python eval.py data/clean_test_data.h5 models/goodNet.h5`
+    E.g., `python eval.py data/clean_test_data.h5 models/goodNet.h5`
     
-   NOTICE: The eval file has been modified!!!!! Only added 'import tensorflow as tf' at the front. Please do not use the original eval.py file.
+   NOTICE: The `eval.py` file has been modified!!!!! Only added `import tensorflow as tf` at the front. Please do not use the original eval.py file.
