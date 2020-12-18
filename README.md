@@ -10,8 +10,10 @@
     └── anonymous_bd_weights.h5
     └── sunglasses_bd_net.h5
     └── sunglasses_bd_weights.h5
+    └── multi_trigger_multi_target_bd_net.h5
+    └── multi_trigger_multi_target_bd_weights.h5
 ├── architecture.py
-└── eval.py // this is the evaluation script
+└── eval.py // [ !!!!!This eval file has been modified!!!!! Only added 'import tensorflow as tf' ]
 ```
 
 ## I. Dependencies
@@ -27,19 +29,17 @@
    2. The dataset contains images from YouTube Aligned Face Dataset. We retrieve 1283 individuals each containing 9 images in the validation dataset.
    3. sunglasses_poisoned_data.h5 contains test images with sunglasses trigger that activates the backdoor for sunglasses_bd_net.h5.
 
-## III. Evaluating the Backdoored Model
-   1. The DNN architecture used to train the face recognition model is the state-of-the-art DeepID network. This DNN is backdoored with multiple triggers. Each trigger is associated with its own target label. 
-   2. To evaluate the backdoored model, execute `eval.py` by running:  
-      `python3 eval.py <clean validation data directory> <model directory>`.
-      
-      E.g., `python3 eval.py data/clean_validation_data.h5  models/sunglasses_bd_net.h5`.
-   3. Clean data classification accuracy on the provided validation dataset for sunglasses_bd_net.h5 is 97.87 %.
+## III. About this Project
+   1. This is the submission of CSAW-HackML-2020(https://github.com/csaw-hackml/CSAW-HackML-2020) competition.
+   2. The detailed information about the code and how this project works is in the `project_report_jl10915.pdf` file.
 
-## IV. Evaluating the Submissions
-To aid teams in designing their defense, here are a few guidelines to keep in mind to get maximum points for the submission:  
-   1. Defense should generalize well to other backdoored networks. To verify the defense generalizability, the organizers will evaluate the submission on a specially curated BadNet, anonymous_bd_net.h5, with different trigger properties. 
-   2. Teams gain maximum points if the defense greatly reduces attack success rate on the trigger(s) while maintaining high clean classification accuracy.
-   3. Points will also be given to teams that identify poisoned images in the online test stream of images.
-   4. Fewer points will be allocated to teams that only detect the network as clean or backdoored.
-   5. Report should contain a description of the defense performance on adaptive attackers.
-
+## IV. How to Run My `badNet_repair.py` File
+   1. Running the following command:
+   `python badNet_repair.py <test data directory> <bad model directory>`
+    E.g., `python badNet_repair.py data/clean_test_data.h5 models/anonymous_bd_net.h5`
+   2. The `badNet_repair.py` file will print all the information you need including the classification accuracy of the test data.
+   3. If you want test the repaired good net separately, the good net will been saved in 'models/goodNet.h5', you can run:
+   `python eval.py <test data directory> <good net model directory>`
+    E.g., `python eval.py data/clean_test_data.h5 models/goodNet.h5`
+    
+   NOTICE: The eval file has been modified!!!!! Only added 'import tensorflow as tf' at the front. Please do not use the original eval.py file.
