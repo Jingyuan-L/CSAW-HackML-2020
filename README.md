@@ -13,6 +13,7 @@
     └── multi_trigger_multi_target_bd_net.h5
     └── multi_trigger_multi_target_bd_weights.h5
 ├── architecture.py
+├── badNet_repair.py // This is my solution file 
 └── eval.py // [ !!!!!This eval file has been modified!!!!! Only added 'import tensorflow as tf' ]
 ```
 
