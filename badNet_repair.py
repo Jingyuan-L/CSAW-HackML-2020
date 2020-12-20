@@ -7,7 +7,7 @@ import tensorflow as tf
 import sys
 
 DENSE_RATE_LIMIT = 0.75
-ACC_DECREASE_LIMIT = 20
+ACC_DECREASE_LIMIT = 50
 
 test_dir = str(sys.argv[1])
 badNet = keras.models.load_model(str(sys.argv[2]))
