@@ -59,6 +59,7 @@
    1. Run the following command:
    
    `python badNet_repair.py <test data directory> <bad model directory>`
+   
     E.g., `python badNet_repair.py data/clean_test_data.h5 models/anonymous_bd_net.h5`
     
    2. The `badNet_repair.py` file will print out all the information you need including the classification accuracy of the test data.
@@ -74,6 +75,7 @@
    1. Run the following command(XXX should be replaced by a specific eval file name:
    
    `python eval_XXX.py <test data directory>` 
+   
    E.g., `python eval_sunglass.py data/test_image.png`
    
    2. All eval files designed for four net are listed as following:
