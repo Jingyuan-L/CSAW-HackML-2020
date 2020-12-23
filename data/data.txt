@@ -1,1 +1,13 @@
 # Place your '.h5' data files in this directory
+# Need all data list in the original github repo
+# https://drive.google.com/drive/folders/13o2ybRJ1BkGUvfmQEeZqDo1kskyFywab
+
+#    └── clean_validation_data.h5 // this is clean data used to evaluate the BadNet and design the backdoor defense
+#    └── clean_test_data.h5
+#    └── sunglasses_poisoned_data.h5
+#    └── anonymous_1_poisoned_data.h5
+#    └── Multi-trigger Multi-target
+#        └── eyebrows_poisoned_data.h5
+#        └── lipstick_poisoned_data.h5
+#        └── sunglasses_poisoned_data.h5
+

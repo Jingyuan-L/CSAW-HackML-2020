@@ -6,6 +6,7 @@ import tensorflow as tf
 
 clean_data_filename = str(sys.argv[1])
 model_filename = str(sys.argv[2])
+weights_file = str(sys.argv[3])
 
 def data_loader(filepath):
     data = h5py.File(filepath, 'r')
@@ -23,6 +24,7 @@ def main():
     x_test = data_preprocess(x_test)
 
     bd_model = keras.models.load_model(model_filename)
+    bd_model.load_weights(weights_file)
 
     clean_label_p = np.argmax(bd_model.predict(x_test), axis=1)
     class_accu = np.mean(np.equal(clean_label_p, y_test))*100

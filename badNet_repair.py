@@ -6,11 +6,12 @@ import keras.backend as K
 import tensorflow as tf
 import sys
 
-DENSE_RATE_LIMIT = 0.75
-ACC_DECREASE_LIMIT = 50
+DENSE_RATE_LIMIT = 0.85
+ACC_DECREASE_LIMIT = 60
 
 test_dir = str(sys.argv[1])
 badNet = keras.models.load_model(str(sys.argv[2]))
+badNet.load_weights(str(sys.argv[3]))
 
 
 def data_loader(filepath):
@@ -25,7 +26,7 @@ def data_loader(filepath):
 def cal_accuracy(x_test, y_test, model):
     x_test = x_test / 255
     clean_label_p = np.argmax(model.predict(x_test), axis=1)
-
+    # print(clean_label_p[0:100])
     class_accu = np.mean(np.equal(clean_label_p, y_test)) * 100
 
     return class_accu
@@ -66,8 +67,8 @@ def pruning(model, layer_name):
     for i in range(conv_3_output_len):
         cur_ave = np.mean(conv_3_contribution[:, :, :, i])
         each_channel_contrib[0, i] = cur_ave
-    print('The contribution of each channel:')
-    print(each_channel_contrib)
+    # print('The contribution of each channel:')
+    # print(each_channel_contrib)
 
     # sort the contrbutions and find the pruning order
     weights, bias = model.get_layer(layer_name).get_weights()
@@ -81,7 +82,7 @@ def pruning(model, layer_name):
     prune_num = 0
     prune_limit = int(len(ascending_contrib[0]) * DENSE_RATE_LIMIT)
     for i in range(prune_limit):
-        if i > 30:
+        if i > 40:
             cur_acc = cal_accuracy(validation_data_x, validation_data_y, model)
             if abs(original_acc - cur_acc > ACC_DECREASE_LIMIT):
                 prune_num = i
@@ -117,23 +118,27 @@ def GoodNet(repairedNet, badNet):
 
     repaired_y = repairedNet(x)
     poisoned_y = badNet(x)
+    repaired_y._name = 'repaired_y'
+    poisoned_y._name = 'poisoned_y'
+    # print(repaired_y.shape, poisoned_y.shape)
 
     def check_class(combined_y):
         clean_y = combined_y[0]
         dirty_y = combined_y[1]
-        # sample_num = clean_y.shape[0]
-        backdoor_class = clean_y.shape[-1] + 1
 
-        sign = tf.abs(tf.sign(K.argmax(clean_y,axis=1) - K.argmax(dirty_y,axis=1)))
+        backdoor_class = clean_y.shape[-1]
+        # print(backdoor_class)
+
+        sign = tf.abs(tf.sign(K.argmax(clean_y, axis=1) - K.argmax(dirty_y, axis=1)))
         # print(sign.shape)
-        y_reclassify = sign * (backdoor_class - 1) + (tf.ones_like(sign)-sign) *  K.argmax(clean_y,axis=1)
+        y_reclassify = sign * backdoor_class + (tf.ones_like(sign)-sign) * K.argmax(clean_y, axis=1)
         # print(y_reclassify.shape)
-        y_reclassify = tf.one_hot(y_reclassify,backdoor_class)
+        y_reclassify = tf.one_hot(y_reclassify, backdoor_class + 1)
         # print(y_reclassify.shape)
 
         return y_reclassify
 
-    y_reclassify = keras.layers.Lambda(check_class, name= 'y_reclasify')([repaired_y, poisoned_y])
+    y_reclassify = keras.layers.Lambda(check_class, name= 'y_reclassify')([repaired_y, poisoned_y])
 
     model = keras.Model(inputs=x, outputs=y_reclassify, name='goodNet')
 
@@ -145,27 +150,21 @@ if __name__ == '__main__':
     print('BadNet test data classification accuracy:', cal_accuracy(test_data_x, test_data_y, badNet))
     prunedNet = pruning(badNet, 'conv_3')
     print('PrunedNet test data classification accuracy:', cal_accuracy(test_data_x, test_data_y, prunedNet))
-    # print('Validation data accuracy:', cal_accuracy(validation_data_x, validation_data_y, prunedNet))
-    # print('Poisoned data accuracy:', cal_accuracy(sunglass_data_x, sunglass_data_y, prunedNet))
-    # print('')
 
     tunedNet = fine_tune(prunedNet, validation_data_x, validation_data_y)
     print('TunedNet test data classification accuracy:', cal_accuracy(test_data_x, test_data_y, tunedNet))
-    # print('Validation data accuracy:', cal_accuracy(validation_data_x, validation_data_y, tunedNet))
-    # print('Poisoned data accuracy:', cal_accuracy(sunglass_data_x, sunglass_data_y, tunedNet))
 
     print('Net has been repaired! ')
 
-    print('Creating the new GoodNet ... ')
-    # K.clear_session()
-    goodNet = GoodNet(tunedNet, badNet)
-    # goodNet.name = 'goodNet'
-    # print(np.argmax(goodNet.predict(validation_data_x)[0:10,:],axis=1))
-    # print(np.argmax(badNet1.predict(validation_data_x)[0:10,:],axis=1))
-    print('GoodNet test data classification accuracy:', cal_accuracy(test_data_x, test_data_y, goodNet))
-    # print('Validation data accuracy:', cal_accuracy(validation_data_x, validation_data_y, goodNet))
-    # print('Poisoned data accuracy:', cal_accuracy(sunglass_data_x, sunglass_data_y, goodNet))
+    origial_badNet = keras.models.load_model(str(sys.argv[2]))
+    origial_badNet._name = 'original_badNet'
+    origial_badNet.load_weights(str(sys.argv[3]))
 
-    goodNet.save('models/goodNet.h5')
-    goodNet.save_weights('models/goodNet_weights.h5')
-    print("GoodNet and its weights has been saved to 'models/goodNet.h5' and 'models/goodNet_weights.h5'! ")
+    print('Creating the new GoodNet ... ')
+
+    goodNet = GoodNet(tunedNet, origial_badNet)
+    print('GoodNet test data classification accuracy:', cal_accuracy(test_data_x, test_data_y, goodNet))
+
+    goodNet.save('models/goodNet_multi_trigger_multi_target.h5')
+    goodNet.save_weights('models/goodNet_multi_trigger_multi_target_weights.h5')
+    print("GoodNet and its weights has been saved! ")

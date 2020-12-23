@@ -5,6 +5,11 @@
     └── clean_validation_data.h5 // this is clean data used to evaluate the BadNet and design the backdoor defense
     └── clean_test_data.h5
     └── sunglasses_poisoned_data.h5
+    └── anonymous_1_poisoned_data.h5
+    └── Multi-trigger Multi-target
+        └── eyebrows_poisoned_data.h5
+        └── lipstick_poisoned_data.h5
+        └── sunglasses_poisoned_data.h5
 ├── models
     └── anonymous_bd_net.h5
     └── anonymous_bd_weights.h5
@@ -32,16 +37,40 @@
    3. sunglasses_poisoned_data.h5 contains test images with sunglasses trigger that activates the backdoor for sunglasses_bd_net.h5.
 
 ## III. About this Project
-   1. This is the submission of CSAW-HackML-2020(https://github.com/csaw-hackml/CSAW-HackML-2020) competition.
-   2. The detailed information about the code and how this project works is in the `project_report_jl10915.pdf` file.
+   1. This is the submission of [CSAW-HackML-2020](https://github.com/csaw-hackml/CSAW-HackML-2020) competition.
+   2. The detailed information about the code and how this project works is in the `ML_for_Cyber_Security_Project_Report_jl10915.pdf` file.
 
 ## IV. How to Run My `badNet_repair.py` File
    1. Run the following command:
+   
    `python badNet_repair.py <test data directory> <bad model directory>`
+   
     E.g., `python badNet_repair.py data/clean_test_data.h5 models/anonymous_bd_net.h5`
+    
    2. The `badNet_repair.py` file will print out all the information you need including the classification accuracy of the test data.
    3. If you want test the repaired good net separately, the good net will been saved in 'models/goodNet.h5', you can run:
+   
    `python eval.py <test data directory> <good net model directory>`
-    E.g., `python eval.py data/clean_test_data.h5 models/goodNet.h5`
+   
+   E.g., `python eval.py data/clean_test_data.h5 models/goodNet.h5`
     
-   NOTICE: The `eval.py` file has been modified!!!!! Only added `import tensorflow as tf` at the front. Please do not use the original eval.py file.
+   This eval.py file is design for `.h5` file for calculating the accuracy rate!
+    
+## V. How to Run My `eval_XXX.py` File
+   1. Run the following command(XXX should be replaced by a specific eval file name:
+   
+   `python eval_XXX.py <test data directory>` 
+   
+   E.g., `python eval_sunglass.py data/test_image.png`
+   
+   2. All eval files designed for four net are listed as following:
+   
+   `eval_sunglass.py`, `eval_anonymous_1.py`, `eval_anonymous_2.py`, `eval_multi_trigger_multi_target.py`.
+   
+   3. Each scripts automatically load the corresponding repaired good net to classify input image.
+   4. Output(will be directly printed out) is either 1283 (if test_image.png is poisoned) or one class in range [0, 1282] (if test_image.png is not poisoned) 
+   
+   
+   
+   
+   
