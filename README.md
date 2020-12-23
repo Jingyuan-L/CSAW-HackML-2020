@@ -11,16 +11,31 @@
         └── lipstick_poisoned_data.h5
         └── sunglasses_poisoned_data.h5
 ├── models
-    └── anonymous_bd_net.h5
-    └── anonymous_bd_weights.h5
     └── sunglasses_bd_net.h5
     └── sunglasses_bd_weights.h5
     └── multi_trigger_multi_target_bd_net.h5
     └── multi_trigger_multi_target_bd_weights.h5
+    └── anonymous_1_bd_net.h5
+    └── anonymous_1_bd_weights.h5
+    └── anonymous_2_bd_net.h5
+    └── anonymous_2_bd_weights.h
+    └── goodNet_anonymous_1.h5
+    └── goodNet_anonymous_1_weights.h5
+    └── goodNet_anonymous_2.h5
+    └── goodNet_anonymous_2_weights.h
+    └── goodNet_sunglasses.h5
+    └── goodNet_sunglasses_weights.h5
+    └── goodNet_multi_trigger_multi_target.h5
+    └── goodNet_multi_trigger_multi_target_weights.h5
 ├── architecture.py
-├── badNet_repair.py // This is my solution file!
+├── badNet_repair.py // This is the file repairing the bad net!
 ├── ML_for_Cyber_Security_Project_Report_jl10915.pdf  // This is my project report!
-└── eval.py // [ !!!!!This eval file has been modified!!!!! Only added 'import tensorflow as tf' ]
+├── eval_sunglass.py // This file is used for evaluating the Submissions
+├── eval_anonymous_1.py // This file is used for evaluating the Submissions
+├── eval_anonymous_2.py // This file is used for evaluating the Submissions
+├── eval_multi_trigger_multi_target.py // This file is used for evaluating the Submissions
+└── eval.py //  !!!!!This eval file has been modified!!!!! Only added 'import tensorflow as tf' 
+
 ```
 
 ## I. Dependencies
@@ -44,7 +59,6 @@
    1. Run the following command:
    
    `python badNet_repair.py <test data directory> <bad model directory>`
-   
     E.g., `python badNet_repair.py data/clean_test_data.h5 models/anonymous_bd_net.h5`
     
    2. The `badNet_repair.py` file will print out all the information you need including the classification accuracy of the test data.
@@ -60,7 +74,6 @@
    1. Run the following command(XXX should be replaced by a specific eval file name:
    
    `python eval_XXX.py <test data directory>` 
-   
    E.g., `python eval_sunglass.py data/test_image.png`
    
    2. All eval files designed for four net are listed as following:
